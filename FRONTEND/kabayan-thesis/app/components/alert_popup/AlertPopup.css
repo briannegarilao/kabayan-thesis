@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+.alert-details {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.alert-details > h4 {
+  color: var(--color-gray);
+  text-wrap: nowrap;
+}

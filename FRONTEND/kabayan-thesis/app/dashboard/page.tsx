@@ -2,8 +2,8 @@
 
 import React from "react";
 import MapSection from "./map-section/MapSection";
-import UnitSection from "./unit-section/UnitSection";
-import QueueSection from "./queue-section/QueueSection";
+import UnitSection from "./left-section/LeftSection";
+import QueueSection from "./right-section/RightSection";
 
 const Dashboard = () => {
   return (
