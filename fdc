@@ -1,0 +1,29 @@
+[33mcommit 7999d87d5e4a9e7ef28780966c58988ccfd4cfaa[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Brianne Garilao <briannegarilao@gmail.com>
+Date:   Sat Apr 12 17:40:33 2025 +0800
+
+    Added the maps feature. Included some of the sections. Created the first marker. On going is the implementation of the alert popup and the inconify icons.
+
+[33mcommit d83f904d2cd501e273bd7b1cced72bcad000de32[m
+Author: Brianne Garilao <briannegarilao@gmail.com>
+Date:   Thu Apr 10 20:46:06 2025 +0800
+
+    Initial commit for frontend
+
+[33mcommit e73f312bc402d3d75100a9bc04018b50d1481bfb[m
+Author: Brianne Garilao <briannegarilao@gmail.com>
+Date:   Thu Apr 10 20:35:56 2025 +0800
+
+    Initial commit
+
+[33mcommit 0017a43eda31390c8729aa73bb93d070971cf9ac[m
+Author: Brianne Garilao <briannegarilao@gmail.com>
+Date:   Thu Apr 10 20:34:03 2025 +0800
+
+    Initial commit
+
+[33mcommit 58a3f00d8d925a288c1c21706c8c874a166dfd0c[m
+Author: Mark Brian Garilao <105984775+briannegarilao@users.noreply.github.com>
+Date:   Thu Apr 10 20:30:21 2025 +0800
+
+    Initial commit

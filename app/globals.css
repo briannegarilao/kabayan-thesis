@@ -1,0 +1,199 @@
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;500;600&display=swap");
+@import "tailwindcss";
+
+@plugin "@iconify/tailwind4" {
+  prefix: "iconify";
+}
+
+/* === RESET STYLES === */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  /* padding: 0; */
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+}
+
+html,
+body {
+  height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* === COLOR VARIABLES === */
+:root {
+  --color-black: #000000;
+  --color-black-01: #373737;
+  --color-gray: #8a8a8a;
+  --color-white-01: #e5e5e5;
+  --color-white: #ffffff;
+  --color-critical-danger: #d32f2f;
+  --color-unassigned: #ff3b30; /* ← new */
+
+  --background: var(--color-black);
+  --foreground: var(--color-white);
+}
+
+/* === FONT THEME === */
+@theme {
+  --color-black: #000000;
+  --color-black-01: #373737;
+  --color-gray: #8a8a8a;
+  --color-white-01: #e5e5e5;
+  --color-white: #ffffff;
+  --color-critical-danger: #d32f2f;
+  --color-unassigned: #ff3b30; /* ← new */
+
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-heading: "Orbitron", sans-serif;
+}
+
+/* === DARK MODE === */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: var(--color-black);
+    --foreground: var(--color-white);
+  }
+}
+
+/* === BODY STYLING === */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* === HEADING STYLES === */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  margin: 0;
+  padding: 0;
+  /* line-height: 0.8; */
+}
+
+h1::before,
+h2::before,
+h3::before,
+h4::before,
+h5::before,
+h6::before,
+p::before {
+  content: "";
+  display: table;
+  margin-bottom: calc(-0.5lh + 0.36em);
+}
+
+h1::after,
+h2::after,
+h3::after,
+h4::after,
+h5::after,
+h6::after,
+p::after {
+  content: "";
+  display: table;
+  margin-bottom: calc(-0.5lh + 0.36em);
+}
+
+h1 {
+  font-size: 32px;
+}
+
+h2 {
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  font-size: 12px;
+}
+
+p {
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+/* === PANEL STYLES FOR DASHBOARD === */
+.dashboard-panel {
+  @apply w-full h-full flex flex-col items-start justify-start 
+         bg-black/75  backdrop-blur-sm;
+}
+
+.dashboard-panel-left {
+  @apply border-r border-white/50;
+}
+
+.dashboard-panel-right {
+  @apply border-l border-white/50;
+}
+
+/* === Google Maps Attribution Position Override (Allowed) === */
+.gmnoprint {
+  opacity: 0.1; /* Optional: makes it less prominent but still visible */
+}
+
+/* === BUTTON WITH H4 LIKE TEXT === */
+.btn-heading-style {
+  @apply border-1 border-white p-[8px] text-white bg-black cursor-pointer;
+  font-family: var(--font-heading);
+  font-size: 16px;
+}
+
+.btn-heading-style:hover {
+  @apply bg-white text-black;
+  transition: all 0.1s ease;
+}
+
+.vertical-label {
+  display: inline-block;
+  writing-mode: vertical-rl; /* Makes text flow vertically (top-to-bottom, right-to-left) */
+  text-orientation: upright; /* Ensures letters remain upright */
+  padding: 16px;
+  border: 2px solid var(--color-critical-danger);
+  background-color: transparent;
+  color: var(--color-white);
+}
+
+/* === SCROLLBAR === */
+@plugin 'tailwind-scrollbar' {
+  nocompatible: true;
+  preferredstrategy: "pseudoelements";
+}
+
+.custom-scrollable {
+  @apply scrollbar-thin
+scrollbar-thumb-white scrollbar-track-black 
+  scrollbar-thumb-rounded-full scrollbar-track-rounded-full;
+}
