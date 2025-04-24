@@ -1,13 +1,17 @@
 import React from "react";
 import { Icon } from "@iconify/react";
 
-const ReportFullInfo = () => {
+const ReportFullInfo = ({ selectedRequest }: { selectedRequest: any }) => {
+  if (!selectedRequest) {
+    return <p className="text-gray-400 p-[18px]">Select a request to view details.</p>;
+  }
+
   return (
     <div className="w-full flex flex-col items-start justify-start p-[18px] gap-[18px] border-b-2 border-gray">
       {/* ALERT TOP HEADING */}
       <div className="w-full flex flex-row items-center justify-between">
         <h5>ALERT TYPE</h5>
-        <h5>16:09:99</h5>
+        <h5>{new Date(selectedRequest.timestamp).toLocaleTimeString()}</h5>
       </div>
 
       {/* ALERT HEADING */}
@@ -18,14 +22,14 @@ const ReportFullInfo = () => {
         </div>
         {/* Disaster Head Info */}
         <div className="w-full flex flex-col items-start justify-start gap-[8px]">
-          <h2>FLOOD</h2>
+          <h2>{selectedRequest.type}</h2>
           {/* Status & Level */}
           <div className="w-full flex flex-row flex-wrap items-center justify-start gap-[8px]">
             <div className="p-[8px] bg-white text-black">
-              <h5>UNASSIGNED</h5>
+              <h5>{selectedRequest.status?.toUpperCase() || "UNKNOWN"}</h5>
             </div>
             <div className="p-[8px] bg-critical-danger text-white">
-              <h5>HIGH</h5>
+              <h5>{selectedRequest.urgency?.toUpperCase() || "N/A"}</h5>
             </div>
           </div>
         </div>
@@ -36,30 +40,27 @@ const ReportFullInfo = () => {
         {/* Name */}
         <div className="w-full flex flex-col items-start justify-start gap-[8px]">
           <h5 className="text-gray">SENDER NAME</h5>
-          <p>Mark Brian Garilao</p>
+          <p>{selectedRequest.user?.name || "N/A"}</p>
         </div>
         {/* Number */}
         <div className="w-full flex flex-col items-start justify-start gap-[8px]">
           <h5 className="text-gray">CONTACT NUMBER</h5>
-          <p>+53 968 299 8790</p>
+          <p>{selectedRequest.user?.contact || "N/A"}</p>
         </div>
         {/* Exact Location */}
         <div className="w-full flex flex-col items-start justify-start gap-[8px]">
           <h5 className="text-gray">EXACT LOCATION</h5>
-          <p>Blk14 Lt 40, Ville De Palme, Brgy. Santiago</p>
+          <p>{selectedRequest.address || "N/A"}</p>
         </div>
         {/* Message */}
         <div className="w-full flex flex-col items-start justify-start gap-[8px]">
           <h5 className="text-gray">MESSAGE</h5>
-          <p>
-            Please rescue us, we can’t go out and our lower ground floor is
-            flooded too.
-          </p>
+          <p>{selectedRequest.message || "No message provided."}</p>
         </div>
         {/* Current Response */}
         <div className="w-full flex flex-col items-start justify-start gap-[8px]">
           <h5 className="text-gray">CURRENT RESPONDER</h5>
-          <p>NONE</p>
+          <p>{selectedRequest.responder || "NONE"}</p>
         </div>
       </div>
 
