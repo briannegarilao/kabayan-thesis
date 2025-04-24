@@ -1,7 +1,7 @@
 import React from "react";
 import ReportFullInfo from "./ReportFullInfo";
 
-const UnitSection = () => {
+const UnitSection = ({ selectedRequest }: { selectedRequest: any }) => {
   return (
     <div className="dashboard-panel dashboard-panel-left flex flex-col">
       {/* header stays fixed height */}
@@ -9,7 +9,7 @@ const UnitSection = () => {
         <h3>FULL REPORT DETAILS</h3>
       </div>
 
-      <ReportFullInfo />
+      <ReportFullInfo selectedRequest={selectedRequest} />
     </div>
   );
 };

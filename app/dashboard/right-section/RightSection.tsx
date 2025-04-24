@@ -1,21 +1,32 @@
 import React from "react";
 import IncidentItem from "./IncidentItem";
 
-const QueueSection = () => {
+const QueueSection = ({
+  users,
+  setSelectedRequest,
+}: {
+  users: any[];
+  setSelectedRequest: Function;
+}) => {
   return (
     <div className="dashboard-panel dashboard-panel-right flex flex-col">
-      {/* header stays fixed height */}
+      {/* Header stays fixed height */}
       <div className="w-full flex items-center border-b-2 border-gray p-[18px]">
         <h3>INCIDENT REPORTS</h3>
       </div>
 
-      {/* this takes all the remaining space and scrolls */}
+      {/* Scrollable report list */}
       <div className="flex-1 w-full flex flex-col overflow-y-auto custom-scrollable">
-        <IncidentItem />
-        <IncidentItem />
-        <IncidentItem />
-        <IncidentItem />
-        <IncidentItem />
+        {users.flatMap((user) =>
+          user.requests.map((req: any, index: number) => (
+            <IncidentItem
+              key={index}
+              req={req}
+              user={user}
+              setSelectedRequest={setSelectedRequest}
+            />
+          ))
+        )}
       </div>
     </div>
   );
