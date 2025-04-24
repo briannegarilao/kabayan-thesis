@@ -28,7 +28,7 @@ const IncidentItem = ({
 
         {/* Right side: timestamp */}
         <h5 className="text-gray">
-          {new Date(req.timestamp).toLocaleTimeString()}
+          {req.timestamp.toDate().toLocaleTimeString()}
         </h5>
       </div>
 

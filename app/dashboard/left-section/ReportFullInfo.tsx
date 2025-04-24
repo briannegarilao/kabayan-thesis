@@ -11,7 +11,7 @@ const ReportFullInfo = ({ selectedRequest }: { selectedRequest: any }) => {
       {/* ALERT TOP HEADING */}
       <div className="w-full flex flex-row items-center justify-between">
         <h5>ALERT TYPE</h5>
-        <h5>{new Date(selectedRequest.timestamp).toLocaleTimeString()}</h5>
+        <h5>{selectedRequest.timestamp.toDate().toLocaleTimeString()}</h5>
       </div>
 
       {/* ALERT HEADING */}
