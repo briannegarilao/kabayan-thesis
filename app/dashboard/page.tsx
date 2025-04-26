@@ -13,37 +13,38 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function fetchData() {
-      const usersCollection = collection(db, "users");
-      const usersSnapshot = await getDocs(usersCollection);
+      const usersSnapshot = await getDocs(collection(db, "users"));
       const userList = await Promise.all(
         usersSnapshot.docs.map(async (docSnap) => {
           const user = docSnap.data();
-          const requestsSnapshot = await getDocs(collection(db, "users", docSnap.id, "requests"));
-          const requests = requestsSnapshot.docs.map(r => ({ ...r.data(), id: r.id }));
-          return { ...user, id: docSnap.id, requests };
+          const requestsSnapshot = await getDocs(
+            collection(db, "users", docSnap.id, "requests")
+          );
+          const requests = requestsSnapshot.docs.map((r) => ({
+            id: r.id,
+            ...(r.data() as any),
+          }));
+          return { id: docSnap.id, ...user, requests };
         })
       );
       setUsers(userList);
     }
-
     fetchData();
   }, []);
 
   return (
     <div className="relative w-screen h-screen overflow-hidden text-white bg-[#0d0d0d]">
-      {/* Background Map (clickable) */}
+      {/* Background Map */}
       <div className="absolute inset-0 z-0">
-        <MapSection />
+        <MapSection users={users} setSelectedRequest={setSelectedRequest} />
       </div>
 
       {/* Floating UI Panels */}
       <div className="absolute inset-0 z-10 flex justify-between pointer-events-none">
-        {/* Unit Panel (left) */}
         <div className="w-[20%] h-full pointer-events-auto">
           <UnitSection selectedRequest={selectedRequest} />
         </div>
-        {/* Queue Panel (right) */}
-        <div className="w-[20%] h-full pointer-events-auto ">
+        <div className="w-[20%] h-full pointer-events-auto">
           <QueueSection users={users} setSelectedRequest={setSelectedRequest} />
         </div>
       </div>
