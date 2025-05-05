@@ -16,8 +16,8 @@
 
 .base {
   background-color: var(--color-critical-danger);
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   box-shadow: 0 0 20px 12px #d32f2fcc;
   border: none;
 }
@@ -32,16 +32,16 @@
 }
 
 .diamond-1 {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   z-index: 0;
   border: 1px solid var(--color-critical-danger);
   transition: transform 0.1s ease;
 }
 
 .diamond-2 {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   z-index: 0;
   border: 0.5px solid var(--color-critical-danger);
   transition: transform 0.15s ease-out;
@@ -54,7 +54,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   font-family: Orbitron, sans-serif;
-  font-size: 32px;
+  font-size: 24px;
   color: white;
   z-index: 2;
   user-select: none;

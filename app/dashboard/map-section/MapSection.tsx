@@ -7,11 +7,13 @@ import AlertMarker from "../../components/marker/AlertMarker"; // adjust path if
 interface MapSectionProps {
   users: Array<{ requests: any[]; [key: string]: any }>;
   setSelectedRequest: (req: any) => void;
+  selectedRequest: any | null; // ← added
 }
 
 const MapSection: React.FC<MapSectionProps> = ({
   users,
   setSelectedRequest,
+  selectedRequest, // ← receive it here
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
@@ -115,6 +117,50 @@ const MapSection: React.FC<MapSectionProps> = ({
       );
     });
   }, [users, setSelectedRequest]);
+
+  // ▶️ NEW: pan & zoom when selectedRequest changes, with quick zoom‐out if target is off‐screen
+  useEffect(() => {
+    if (!mapInstance.current || !selectedRequest) return;
+
+    // derive lat/lng from the selectedRequest just like with markers
+    let pos: google.maps.LatLngLiteral = { lat: 0, lng: 0 };
+    const loc = selectedRequest.location;
+    if (Array.isArray(loc) && loc.length === 2) {
+      pos = { lat: loc[0], lng: loc[1] };
+    } else if (loc?.latitude !== undefined) {
+      pos = { lat: loc.latitude, lng: loc.longitude };
+    } else if (selectedRequest.lat && selectedRequest.lng) {
+      pos = { lat: selectedRequest.lat, lng: selectedRequest.lng };
+    }
+
+    const map = mapInstance.current;
+    const targetLatLng = new google.maps.LatLng(pos.lat, pos.lng);
+    const bounds = map.getBounds();
+
+    // if the target is outside the current view, do a quick zoom‐out first
+    if (bounds && !bounds.contains(targetLatLng)) {
+      const quickZoom = 11;
+      // console.log("🌍 Target offscreen – quick zooming out", quickZoom);
+      map.setZoom(quickZoom);
+      // once that resize settles, pan and zoom back in
+      google.maps.event.addListenerOnce(map, "idle", () => {
+        // console.log("🚀 Panning to target after zoom‐out", pos);
+        map.panTo(pos);
+        const targetZoom = 16;
+        // console.log("🔍 Zooming in to", targetZoom);
+        map.setZoom(targetZoom);
+      });
+    } else {
+      // target already in view: just pan & zoom normally
+      // console.log("📍 Target onscreen – panning directly to", pos);
+      map.panTo(pos);
+      const targetZoom = 16;
+      if (map.getZoom() !== targetZoom) {
+        // console.log("🔍 Zooming in to", targetZoom);
+        map.setZoom(targetZoom);
+      }
+    }
+  }, [selectedRequest]);
 
   return <div ref={mapRef} className="w-full h-full" />;
 };

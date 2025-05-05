@@ -3,11 +3,15 @@ import { Icon } from "@iconify/react";
 
 const ReportFullInfo = ({ selectedRequest }: { selectedRequest: any }) => {
   if (!selectedRequest) {
-    return <p className="text-gray-400 p-[18px]">Select a request to view details.</p>;
+    return (
+      <div className="w-full h-full flex flex-col items-start justify-start flex-1 overflow-auto p-[16px] gap-[16px] border-b-2 border-gray">
+        <p className="text-gray-400">Select a request to view details.</p>
+      </div>
+    );
   }
 
   return (
-    <div className="w-full flex flex-col items-start justify-start p-[18px] gap-[18px] border-b-2 border-gray">
+    <div className="w-full h-full flex flex-col items-start justify-start flex-1 overflow-auto p-[16px] gap-[16px] border-b-2 border-gray">
       {/* ALERT TOP HEADING */}
       <div className="w-full flex flex-row items-center justify-between">
         <h5>ALERT TYPE</h5>
