@@ -1,5 +1,23 @@
+// app/dashboard/left-section/ReportFullInfo.tsx
+
 import React from "react";
 import { Icon } from "@iconify/react";
+
+// map of icon names
+const iconMap: Record<string, string> = {
+  Flood: "material-symbols:flood",
+  Earthquake: "ri:earthquake-fill",
+  Fire: "mdi:fire",
+  Health: "map:health",
+};
+
+// map of border/icon colors (from your React Native theme)
+const colorMap: Record<string, string> = {
+  Flood: "#00BFFF", // floodAquaBlue
+  Earthquake: "#FFA500", // earthquakeOrange
+  Fire: "#FF0000", // fireRed
+  Health: "#0000FF", // healthBlue
+};
 
 const ReportFullInfo = ({ selectedRequest }: { selectedRequest: any }) => {
   if (!selectedRequest) {
@@ -10,30 +28,66 @@ const ReportFullInfo = ({ selectedRequest }: { selectedRequest: any }) => {
     );
   }
 
+  const {
+    type,
+    timestamp,
+    status,
+    urgency,
+    user,
+    address,
+    message,
+    responder,
+  } = selectedRequest;
+
+  const iconName = iconMap[type] || iconMap.Flood;
+  const color = colorMap[type] || "#FFFFFF"; // fallback to white
+
+  // sizing logic you already have
+  const defaultSize = 64;
+  const iconSize = type === "Health" ? 58 : defaultSize;
+  const containerTotal = defaultSize + 8; // 72px
+  const padding = Math.round((containerTotal - iconSize) / 2);
+
   return (
-    <div className="w-full h-full flex flex-col items-start justify-start flex-1 overflow-auto p-[16px] gap-[16px] border-b-2 border-gray">
+    <div
+      style={{ overflowY: "auto", scrollBehavior: "smooth" }}
+      className="w-full h-full flex flex-col items-start justify-start flex-1 overflow-auto p-[16px] gap-[16px] border-b-2 border-gray custom-scrollable"
+    >
       {/* ALERT TOP HEADING */}
       <div className="w-full flex flex-row items-center justify-between">
         <h5>ALERT TYPE</h5>
-        <h5>{selectedRequest.timestamp.toDate().toLocaleTimeString()}</h5>
+        <h5>{timestamp.toDate().toLocaleTimeString()}</h5>
       </div>
 
       {/* ALERT HEADING */}
       <div className="w-full flex flex-row items-start justify-start gap-[16px]">
         {/* Alert Icon */}
-        <div className="p-[4px] border-2 border-white rounded-lg">
-          <Icon icon="material-symbols:flood" width={64} height={64} />
+        <div
+          className="rounded-lg flex items-center justify-center"
+          style={{
+            width: containerTotal,
+            height: containerTotal,
+            padding: `${padding}px`,
+            border: `2px solid ${color}`,
+          }}
+        >
+          <Icon
+            icon={iconName}
+            width={iconSize}
+            height={iconSize}
+            color={color}
+          />
         </div>
+
         {/* Disaster Head Info */}
         <div className="w-full flex flex-col items-start justify-start gap-[8px]">
-          <h2>{selectedRequest.type}</h2>
-          {/* Status & Level */}
+          <h2>{type}</h2>
           <div className="w-full flex flex-row flex-wrap items-center justify-start gap-[8px]">
             <div className="p-[8px] bg-white text-black">
-              <h5>{selectedRequest.status?.toUpperCase() || "UNKNOWN"}</h5>
+              <h5>{(status || "UNKNOWN").toUpperCase()}</h5>
             </div>
             <div className="p-[8px] bg-critical-danger text-white">
-              <h5>{selectedRequest.urgency?.toUpperCase() || "N/A"}</h5>
+              <h5>{(urgency || "N/A").toUpperCase()}</h5>
             </div>
           </div>
         </div>
@@ -44,27 +98,27 @@ const ReportFullInfo = ({ selectedRequest }: { selectedRequest: any }) => {
         {/* Name */}
         <div className="w-full flex flex-col items-start justify-start gap-[8px]">
           <h5 className="text-gray">SENDER NAME</h5>
-          <p>{selectedRequest.user?.name || "N/A"}</p>
+          <p>{user?.name || "N/A"}</p>
         </div>
         {/* Number */}
         <div className="w-full flex flex-col items-start justify-start gap-[8px]">
           <h5 className="text-gray">CONTACT NUMBER</h5>
-          <p>{selectedRequest.user?.contact || "N/A"}</p>
+          <p>{user?.contact || "N/A"}</p>
         </div>
         {/* Exact Location */}
         <div className="w-full flex flex-col items-start justify-start gap-[8px]">
           <h5 className="text-gray">EXACT LOCATION</h5>
-          <p>{selectedRequest.address || "N/A"}</p>
+          <p>{address || "N/A"}</p>
         </div>
         {/* Message */}
         <div className="w-full flex flex-col items-start justify-start gap-[8px]">
           <h5 className="text-gray">MESSAGE</h5>
-          <p>{selectedRequest.message || "No message provided."}</p>
+          <p>{message || "No message provided."}</p>
         </div>
-        {/* Current Response */}
+        {/* Current Responder */}
         <div className="w-full flex flex-col items-start justify-start gap-[8px]">
           <h5 className="text-gray">CURRENT RESPONDER</h5>
-          <p>{selectedRequest.responder || "NONE"}</p>
+          <p>{responder || "NONE"}</p>
         </div>
       </div>
 

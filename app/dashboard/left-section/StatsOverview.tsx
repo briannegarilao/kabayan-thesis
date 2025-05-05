@@ -32,7 +32,7 @@ const StatsOverview: React.FC<StatsOverviewProps> = ({ users }) => {
   const respondersAvailable = uniqueResponders.size;
 
   return (
-    <div className="w-full h-1/4 flex flex-col items-start justify-start p-[16px] gap-[18px] border-b-2 border-gray">
+    <div className="w-full h-1/4 flex flex-col items-start justify-start p-[16px] gap-[18px] border-gray">
       <h4 className="text-white">OVERVIEW</h4>
       <div className="w-full flex flex-col items-start justify-start gap-[16px]">
         <div className="w-full flex flex-row items-start justify-start gap-[16px]">
