@@ -1,5 +1,3 @@
-// app/dashboard/left-section/ReportFullInfo.tsx
-
 import React from "react";
 import { Icon } from "@iconify/react";
 
@@ -11,7 +9,7 @@ const iconMap: Record<string, string> = {
   Health: "map:health",
 };
 
-// map of border/icon colors (from your React Native theme)
+// map of border/icon colors (from your React Native theme)
 const colorMap: Record<string, string> = {
   Flood: "#00BFFF", // floodAquaBlue
   Earthquake: "#FFA500", // earthquakeOrange
@@ -19,7 +17,15 @@ const colorMap: Record<string, string> = {
   Health: "#0000FF", // healthBlue
 };
 
-const ReportFullInfo = ({ selectedRequest }: { selectedRequest: any }) => {
+interface ReportFullInfoProps {
+  selectedRequest: any;
+  onRespondClick: () => void;
+}
+
+const ReportFullInfo: React.FC<ReportFullInfoProps> = ({
+  selectedRequest,
+  onRespondClick,
+}) => {
   if (!selectedRequest) {
     return (
       <div className="w-full h-full flex flex-col items-start justify-start flex-1 overflow-auto p-[16px] gap-[16px] border-b-2 border-gray">
@@ -40,7 +46,7 @@ const ReportFullInfo = ({ selectedRequest }: { selectedRequest: any }) => {
   } = selectedRequest;
 
   const iconName = iconMap[type] || iconMap.Flood;
-  const color = colorMap[type] || "#FFFFFF"; // fallback to white
+  const color = colorMap[type] || "#FFFFFF";
 
   // sizing logic you already have
   const defaultSize = 64;
@@ -83,12 +89,7 @@ const ReportFullInfo = ({ selectedRequest }: { selectedRequest: any }) => {
         <div className="w-full flex flex-col items-start justify-start gap-[8px]">
           <h2>{type}</h2>
           <div className="w-full flex flex-row flex-wrap items-center justify-start gap-[8px]">
-            <div className="p-[8px] bg-white text-black">
-              <h5>{(status || "UNKNOWN").toUpperCase()}</h5>
-            </div>
-            <div className="p-[8px] bg-critical-danger text-white">
-              <h5>{(urgency || "N/A").toUpperCase()}</h5>
-            </div>
+            {/* status & urgency badges can go here if needed */}
           </div>
         </div>
       </div>
@@ -123,7 +124,10 @@ const ReportFullInfo = ({ selectedRequest }: { selectedRequest: any }) => {
       </div>
 
       {/* BUTTON */}
-      <div className="p-[10px] border-2 border-white">
+      <div
+        className="p-[10px] border-2 border-white cursor-pointer"
+        onClick={onRespondClick}
+      >
         <h3>RESPOND</h3>
       </div>
     </div>

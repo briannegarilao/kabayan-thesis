@@ -1,5 +1,3 @@
-// app/dashboard/left-section/LeftSection.tsx
-
 import React from "react";
 import StatsOverview from "./StatsOverview";
 import ReportFullInfo from "./ReportFullInfo";
@@ -7,11 +5,13 @@ import ReportFullInfo from "./ReportFullInfo";
 interface UnitSectionProps {
   selectedRequest: any;
   users: any[];
+  onRespondClick: () => void;
 }
 
 const UnitSection: React.FC<UnitSectionProps> = ({
   selectedRequest,
   users,
+  onRespondClick,
 }) => {
   return (
     <div className="dashboard-panel dashboard-panel-left flex flex-col">
@@ -20,7 +20,11 @@ const UnitSection: React.FC<UnitSectionProps> = ({
         <h4>FULL REPORT DETAILS</h4>
       </div>
 
-      <ReportFullInfo selectedRequest={selectedRequest} />
+      <ReportFullInfo
+        selectedRequest={selectedRequest}
+        onRespondClick={onRespondClick}
+      />
+
       {/* stats overview at top */}
       <StatsOverview users={users} />
     </div>
