@@ -1,3 +1,5 @@
+// app/dashboard/right-section/RightSection.tsx
+
 import React from "react";
 import IncidentItem from "./IncidentItem";
 
@@ -7,9 +9,14 @@ const QueueSection = ({
   setSelectedRequest,
 }: {
   users: any[];
-  selectedRequest: any | null; // ← added
+  selectedRequest: any | null;
   setSelectedRequest: Function;
 }) => {
+  // flatten all requests into a single array
+  const incidents = users.flatMap((user) =>
+    user.requests.map((req: any) => ({ ...req, user }))
+  );
+
   return (
     <div className="dashboard-panel dashboard-panel-right flex flex-col">
       {/* Header stays fixed height */}
@@ -22,16 +29,18 @@ const QueueSection = ({
         style={{ overflowY: "auto", scrollBehavior: "smooth" }}
         className="flex-1 w-full flex flex-col overflow-y-auto custom-scrollable"
       >
-        {users.flatMap((user) =>
-          user.requests.map((req: any, index: number) => (
+        {incidents.length > 0 ? (
+          incidents.map((inc, index) => (
             <IncidentItem
-              key={`${user.id}-${req.id}`}
-              req={req}
-              user={user}
-              selectedRequest={selectedRequest} // ← added
+              key={`${inc.user.id}-${inc.id}`}
+              req={inc}
+              user={inc.user}
+              selectedRequest={selectedRequest}
               setSelectedRequest={setSelectedRequest}
             />
           ))
+        ) : (
+          <p className="text-gray-400 p-[18px]">No incident reports found.</p>
         )}
       </div>
     </div>

@@ -19,7 +19,7 @@ interface ResponderFullInfoProps {
 const ResponderFullInfo: React.FC<ResponderFullInfoProps> = ({ responder }) => {
   if (!responder) {
     return (
-      <div className="flex-1 flex items-center justify-center text-gray">
+      <div className="flex-1 flex items-start justify-center text-gray">
         Select a responder from the list
       </div>
     );
@@ -30,8 +30,13 @@ const ResponderFullInfo: React.FC<ResponderFullInfoProps> = ({ responder }) => {
   return (
     <div
       style={{ overflowY: "auto", scrollBehavior: "smooth" }}
-      className="w-full h-full flex flex-col items-start justify-start flex-1 overflow-auto p-[16px] gap-[16px] border-b-2 border-gray custom-scrollable"
+      className="w-full h-full flex flex-col items-start justify-start flex-1 overflow-auto p-[16px] gap-[16px]  custom-scrollable"
     >
+      {/* ALERT TOP HEADING */}
+      <div className="w-full flex flex-row items-center justify-between">
+        <h5>VEHICLE INFO</h5>
+      </div>
+
       <div className="flex items-center gap-4">
         <div className="rounded-lg flex items-center justify-center border-2 border-white p-2">
           <Icon icon={iconName} width={64} height={64} className="text-white" />

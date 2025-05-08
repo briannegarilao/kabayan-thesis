@@ -37,7 +37,7 @@ const RespondSection: React.FC<RespondSectionProps> = ({
   return (
     <div
       className={`
-        fixed inset-y-0 right-0 z-20 w-[80%] transform
+        fixed inset-y-0 right-0 z-20 w-[60%] transform
         ${show ? "translate-x-0" : "translate-x-full"}
         transition-transform duration-300 ease-in-out
         bg-black/75 backdrop-blur-sm flex pointer-events-auto
@@ -56,24 +56,33 @@ const RespondSection: React.FC<RespondSectionProps> = ({
         </div>
 
         {/* MAIN SECTION */}
-        <div className="w-full flex flex-1 overflow-auto">
-          {/* left: full info */}
-          <div className="w-[40%] h-full border-r border-gray">
-            <ResponderFullInfo responder={selectedRes} />
+        <div className="w-full flex flex-1 flex-row overflow-auto">
+          {/* 2nd column  */}
+          <div className="w-[50%] flex-1 h-full border-r border-gray">
+            <div className="w-full h-[40%] flex flex-col items-start border-b border-gray overflow-y-auto">
+              <ResponderFullInfo responder={selectedRes} />
+            </div>
+
+            <div></div>
           </div>
 
-          {/* right: list */}
-          <div className="w-[60%] h-full overflow-y-auto">
-            <ul className="p-6 space-y-2">
-              {list.map((r) => (
-                <ResponderItem
-                  key={r.id}
-                  responder={r}
-                  selected={selectedRes?.id === r.id}
-                  onSelect={setSelectedRes}
-                />
-              ))}
-            </ul>
+          {/* 3rd column */}
+          <div className="w-[50%] flex-1 h-full">
+            <div className="w-full flex items-center border-b-2 border-gray px-[18px] py-[16px]">
+              <h4>FULL REPORT DETAILS</h4>
+            </div>
+            <div className="w-full h-full flex flex-col items-start justify-start overflow-auto custom-scrollable">
+              <ul className="w-full h-full flex flex-col items-start justify-start">
+                {list.map((r) => (
+                  <ResponderItem
+                    key={r.id}
+                    responder={r}
+                    selected={selectedRes?.id === r.id}
+                    onSelect={setSelectedRes}
+                  />
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </div>
