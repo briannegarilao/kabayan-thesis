@@ -6,85 +6,101 @@ admin.initializeApp({
 });
 
 const db = admin.firestore();
-
-const userId = "dummy-user-123";
-
 const { Timestamp } = require("firebase-admin/firestore");
 
-//Sample Data
-const sampleFloodRequests = [
+const sampleUsers = [
   {
-    type: "Flood",
+    id: "dummy-user-1",
+    name: "Mark Brian Garilao",
+    email: "mark1@email.com",
+    contact: "+63 900 000 0001",
+    address: "Blk14 Lt 40, Ville De Palme, Brgy. Sampaloc 1",
     message: "Our ground floor is flooded, please send help.",
     urgency: "high",
-    location: new admin.firestore.GeoPoint(14.2794, 121.0099),
-    address: "Blk14 Lt 40, Ville De Palme, Brgy. Santiago"
+    location: new admin.firestore.GeoPoint(14.3113, 120.9570)
   },
   {
-    type: "Flood",
-    message: "We are trapped by rising waters near the river.",
+    id: "dummy-user-2",
+    name: "Jane Dela Cruz",
+    email: "jane@email.com",
+    contact: "+63 900 000 0002",
+    address: "Burol Main Road, Brgy. Burol 2",
+    message: "Trapped by water near the barangay hall.",
     urgency: "critical",
-    location: new admin.firestore.GeoPoint(14.2802, 121.0105),
-    address: "Brgy. Salitran 3, near Dasmariñas River"
+    location: new admin.firestore.GeoPoint(14.3182, 120.9721)
   },
   {
-    type: "Flood",
-    message: "Flooded street blocking cars and pedestrians.",
+    id: "dummy-user-3",
+    name: "Juan Santos",
+    email: "juan@email.com",
+    contact: "+63 900 000 0003",
+    address: "Jade St, Golden City, Brgy. Salawag",
+    message: "Street is flooded and no way out.",
     urgency: "medium",
-    location: new admin.firestore.GeoPoint(14.2781, 121.0117),
-    address: "Molave Street, Brgy. Sampaloc"
+    location: new admin.firestore.GeoPoint(14.3221, 120.9819)
   },
   {
-    type: "Flood",
-    message: "Flood level reached chest height, we're on the roof.",
+    id: "dummy-user-4",
+    name: "Maria Lopez",
+    email: "maria@email.com",
+    contact: "+63 900 000 0004",
+    address: "Phase 2, Sampaloc Heights, Brgy. Sampaloc 1",
+    message: "Flood water is rising fast. We need help.",
     urgency: "critical",
-    location: new admin.firestore.GeoPoint(14.2818, 121.0080),
-    address: "Cypress Lane, Brgy. San Jose"
+    location: new admin.firestore.GeoPoint(14.3127, 120.9558)
   },
   {
-    type: "Flood",
+    id: "dummy-user-5",
+    name: "Luis Mendoza",
+    email: "luis@email.com",
+    contact: "+63 900 000 0005",
+    address: "Salitran Road, Brgy. Salawag",
     message: "Rainwater entering house, urgent rescue needed.",
     urgency: "high",
-    location: new admin.firestore.GeoPoint(14.2775, 121.0142),
-    address: "Cattleya Subd., Brgy. Paliparan"
+    location: new admin.firestore.GeoPoint(14.3259, 120.9825)
   }
 ];
 
-//Push Request for a User
-async function pushMultipleDummyRequests() {
-  await db.collection("users").doc(userId).set({
-    name: "Mark Brian Garilao",
-    email: "mark@email.com",
-    contact: "+63 968 299 8790",
-    address: "Blk14 Lt 40, Ville De Palme, Brgy. Santiago"
-  }, { merge: true });
+async function pushOneRequestPerUser() {
+  for (const user of sampleUsers) {
+    await db.collection("users").doc(user.id).set({
+      name: user.name,
+      email: user.email,
+      contact: user.contact,
+      address: user.address
+    }, { merge: true });
 
-  for (let i = 0; i < sampleFloodRequests.length; i++) {
-    const requestId = db.collection("users").doc(userId).collection("requests").doc().id;
+    const requestId = db.collection("users").doc(user.id).collection("requests").doc().id;
     const requestData = {
-      ...sampleFloodRequests[i],
+      type: "Flood",
+      message: user.message,
+      urgency: user.urgency,
+      location: user.location,
+      address: user.address,
       timestamp: Timestamp.now(),
       status: "pending"
     };
 
-    await db.collection("users").doc(userId).collection("requests").doc(requestId).set(requestData);
-    console.log(`✅ Flood Request ${i + 1} pushed`);
+    await db.collection("users").doc(user.id).collection("requests").doc(requestId).set(requestData);
+    console.log(`✅ Request created for ${user.id}`);
 
     const unitId = await addUnit();
-    await dispatchUnit(unitId, requestId, requestData.location);
-    await saveToHistory(userId, requestId);
+    await dispatchUnit(unitId, requestId, user.location);
+    await saveToHistory(user.id, requestId);
   }
 }
 
-//Assign Responder
 async function addUnit() {
   const unitRef = db.collection("units").doc();
   const unitId = unitRef.id;
 
   await unitRef.set({
-    type: "Responder",
+    type: "Firetruck",
+    plateNumber: "ABC-1234",
+    capacity: "5 crew",
+    color: "Red",
     status: "available",
-    currentLocation: new admin.firestore.GeoPoint(14.2811, 121.0205),
+    currentLocation: new admin.firestore.GeoPoint(14.3165, 120.9602),
     assignedRequestId: null,
     lastUpdated: Timestamp.now()
   });
@@ -92,7 +108,6 @@ async function addUnit() {
   return unitId;
 }
 
-//Active Dispatches
 async function dispatchUnit(unitId, requestId, location) {
   const dispatchRef = db.collection("active_dispatches").doc();
   const dispatchId = dispatchRef.id;
@@ -115,7 +130,6 @@ async function dispatchUnit(unitId, requestId, location) {
   return dispatchId;
 }
 
-//Sync to History
 async function saveToHistory(userId, requestId) {
   const userRef = db.collection("users").doc(userId);
   const requestRef = userRef.collection("requests").doc(requestId);
@@ -127,7 +141,7 @@ async function saveToHistory(userId, requestId) {
     const requestData = requestDoc.data();
 
     const historyEntry = {
-      userId: userId,
+      userId,
       userName: userData.name,
       userEmail: userData.email,
       contact: userData.contact,
@@ -146,4 +160,4 @@ async function saveToHistory(userId, requestId) {
 }
 
 // Run
-pushMultipleDummyRequests();
+pushOneRequestPerUser();

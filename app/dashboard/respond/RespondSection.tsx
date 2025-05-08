@@ -1,11 +1,15 @@
-// app/dashboard/respond/RespondSection.tsx
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/firebaseconfig"; // Adjust if your firebase file is elsewhere
 import ResponderItem from "./ResponderItem";
 import ResponderFullInfo from "./ResponderFullInfo";
+<<<<<<< HEAD
 import AssignedToItem from "./AssignedToItem";
 import sampleResponders from "./sampleData";
+=======
+>>>>>>> b5a939ad45bb437abde34cc9b8756ce740647683
 
 export interface Responder {
   id: string;
@@ -29,9 +33,9 @@ interface RespondSectionProps {
 const RespondSection: React.FC<RespondSectionProps> = ({
   show,
   selectedRequest,
-  responders = [],
   onClose,
 }) => {
+<<<<<<< HEAD
   const list = responders.length > 0 ? responders : sampleResponders;
   const [selectedRes, setSelectedRes] = useState<Responder | null>(null);
 
@@ -47,6 +51,35 @@ const RespondSection: React.FC<RespondSectionProps> = ({
     selectedRes && mockAssignments[selectedRes.id]
       ? mockAssignments[selectedRes.id]
       : [];
+=======
+  const [responders, setResponders] = useState<Responder[]>([]);
+  const [selectedRes, setSelectedRes] = useState<Responder | null>(null);
+
+  useEffect(() => {
+    const fetchResponders = async () => {
+      const querySnapshot = await getDocs(collection(db, "units"));
+      const data: Responder[] = [];
+
+      querySnapshot.forEach((doc) => {
+        const d = doc.data();
+        data.push({
+          id: doc.id,
+          name: d.vehicleName || "Unknown Unit",
+          type: d.type || "Unknown",
+          capacity: d.capacity || "0",
+          plate: d.plateNumber || "N/A",
+          color: d.color || "N/A",
+          status: d.status || "idle",
+          assignedTo: d.assignedRequestId || "",
+        });
+      });
+
+      setResponders(data);
+    };
+
+    fetchResponders();
+  }, []);
+>>>>>>> b5a939ad45bb437abde34cc9b8756ce740647683
 
   return (
     <div
@@ -69,6 +102,7 @@ const RespondSection: React.FC<RespondSectionProps> = ({
           </button>
         </div>
 
+<<<<<<< HEAD
         {/* MAIN */}
         <div className="w-full flex flex-1 flex-row">
           {/* left column: full info + assignments */}
@@ -95,6 +129,16 @@ const RespondSection: React.FC<RespondSectionProps> = ({
                 )}
               </div>
             </div>
+=======
+        {/* MAIN SECTION */}
+        <div className="w-full flex flex-1 flex-row overflow-auto">
+          {/* 2nd column */}
+          <div className="w-[50%] flex-1 h-full border-r border-gray">
+            <div className="w-full h-[40%] flex flex-col items-start border-b border-gray overflow-y-auto">
+              <ResponderFullInfo responder={selectedRes} />
+            </div>
+            <div></div>
+>>>>>>> b5a939ad45bb437abde34cc9b8756ce740647683
           </div>
 
           {/* right column: all responders */}
@@ -102,6 +146,7 @@ const RespondSection: React.FC<RespondSectionProps> = ({
             <div className="w-full flex items-center border-b-2 border-gray px-[18px] py-[16px]">
               <h4>AVAILABLE RESPONDERS</h4>
             </div>
+<<<<<<< HEAD
             <div className="w-full h-full overflow-auto custom-scrollable">
               {list.map((r) => (
                 <ResponderItem
@@ -111,6 +156,19 @@ const RespondSection: React.FC<RespondSectionProps> = ({
                   onSelect={setSelectedRes}
                 />
               ))}
+=======
+            <div className="w-full h-full flex flex-col items-start justify-start overflow-auto custom-scrollable">
+              <ul className="w-full h-full flex flex-col items-start justify-start">
+                {responders.map((r) => (
+                  <ResponderItem
+                    key={r.id}
+                    responder={r}
+                    selected={selectedRes?.id === r.id}
+                    onSelect={setSelectedRes}
+                  />
+                ))}
+              </ul>
+>>>>>>> b5a939ad45bb437abde34cc9b8756ce740647683
             </div>
           </div>
         </div>
