@@ -1,10 +1,10 @@
-// app/dashboard/respond/RespondSection.tsx
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/firebaseconfig"; // Adjust if your firebase file is elsewhere
 import ResponderItem from "./ResponderItem";
 import ResponderFullInfo from "./ResponderFullInfo";
-import sampleResponders from "./sampleData";
 
 export interface Responder {
   id: string;
@@ -27,12 +27,35 @@ interface RespondSectionProps {
 const RespondSection: React.FC<RespondSectionProps> = ({
   show,
   selectedRequest,
-  responders = [],
   onClose,
 }) => {
-  // use passed responders if any, otherwise mock
-  const list = responders.length > 0 ? responders : sampleResponders;
+  const [responders, setResponders] = useState<Responder[]>([]);
   const [selectedRes, setSelectedRes] = useState<Responder | null>(null);
+
+  useEffect(() => {
+    const fetchResponders = async () => {
+      const querySnapshot = await getDocs(collection(db, "units"));
+      const data: Responder[] = [];
+
+      querySnapshot.forEach((doc) => {
+        const d = doc.data();
+        data.push({
+          id: doc.id,
+          name: d.vehicleName || "Unknown Unit",
+          type: d.type || "Unknown",
+          capacity: d.capacity || "0",
+          plate: d.plateNumber || "N/A",
+          color: d.color || "N/A",
+          status: d.status || "idle",
+          assignedTo: d.assignedRequestId || "",
+        });
+      });
+
+      setResponders(data);
+    };
+
+    fetchResponders();
+  }, []);
 
   return (
     <div
@@ -57,12 +80,11 @@ const RespondSection: React.FC<RespondSectionProps> = ({
 
         {/* MAIN SECTION */}
         <div className="w-full flex flex-1 flex-row overflow-auto">
-          {/* 2nd column  */}
+          {/* 2nd column */}
           <div className="w-[50%] flex-1 h-full border-r border-gray">
             <div className="w-full h-[40%] flex flex-col items-start border-b border-gray overflow-y-auto">
               <ResponderFullInfo responder={selectedRes} />
             </div>
-
             <div></div>
           </div>
 
@@ -73,7 +95,7 @@ const RespondSection: React.FC<RespondSectionProps> = ({
             </div>
             <div className="w-full h-full flex flex-col items-start justify-start overflow-auto custom-scrollable">
               <ul className="w-full h-full flex flex-col items-start justify-start">
-                {list.map((r) => (
+                {responders.map((r) => (
                   <ResponderItem
                     key={r.id}
                     responder={r}
