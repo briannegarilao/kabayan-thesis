@@ -4,6 +4,7 @@
 import React, { useState } from "react";
 import ResponderItem from "./ResponderItem";
 import ResponderFullInfo from "./ResponderFullInfo";
+import AssignedToItem from "./AssignedToItem";
 import sampleResponders from "./sampleData";
 
 export interface Responder {
@@ -14,7 +15,8 @@ export interface Responder {
   plate: string;
   color: string;
   status: string;
-  assignedTo?: string;
+  // we’ll ignore any assignedTo from data; use our mock below
+  assignedTo?: string[];
 }
 
 interface RespondSectionProps {
@@ -30,9 +32,21 @@ const RespondSection: React.FC<RespondSectionProps> = ({
   responders = [],
   onClose,
 }) => {
-  // use passed responders if any, otherwise mock
   const list = responders.length > 0 ? responders : sampleResponders;
   const [selectedRes, setSelectedRes] = useState<Responder | null>(null);
+
+  // ── MOCK ASSIGNMENTS ──────────────────────────────
+  const mockAssignments: Record<string, string[]> = {
+    r1: ["Report-42", "Report-17"],
+    r2: [],
+    r3: ["Report-88"],
+  };
+
+  // lookup assignments for the selected responder
+  const assignments =
+    selectedRes && mockAssignments[selectedRes.id]
+      ? mockAssignments[selectedRes.id]
+      : [];
 
   return (
     <div
@@ -55,33 +69,48 @@ const RespondSection: React.FC<RespondSectionProps> = ({
           </button>
         </div>
 
-        {/* MAIN SECTION */}
-        <div className="w-full flex flex-1 flex-row overflow-auto">
-          {/* 2nd column  */}
-          <div className="w-[50%] flex-1 h-full border-r border-gray">
-            <div className="w-full h-[40%] flex flex-col items-start border-b border-gray overflow-y-auto">
+        {/* MAIN */}
+        <div className="w-full flex flex-1 flex-row">
+          {/* left column: full info + assignments */}
+          <div className="w-[50%] flex-1 h-full border-r-2 border-gray flex flex-col">
+            {/* details */}
+            <div className="w-full h-[40%] border-b border-gray overflow-y-auto">
               <ResponderFullInfo responder={selectedRes} />
             </div>
 
-            <div></div>
+            {/* assignments list */}
+            <div className="w-full flex-1 flex flex-col">
+              <div className="w-full flex items-center border-b-2 border-gray px-[18px] py-[16px]">
+                <h4>CURRENTLY ASSIGNED TO</h4>
+              </div>
+              <div className="w-full h-full overflow-auto custom-scrollable">
+                {assignments.length > 0 ? (
+                  assignments.map((a) => (
+                    <AssignedToItem key={a} assignment={a} />
+                  ))
+                ) : (
+                  <p className="text-gray-400 p-[18px]">
+                    No current assignments
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
 
-          {/* 3rd column */}
+          {/* right column: all responders */}
           <div className="w-[50%] flex-1 h-full">
             <div className="w-full flex items-center border-b-2 border-gray px-[18px] py-[16px]">
-              <h4>FULL REPORT DETAILS</h4>
+              <h4>AVAILABLE RESPONDERS</h4>
             </div>
-            <div className="w-full h-full flex flex-col items-start justify-start overflow-auto custom-scrollable">
-              <ul className="w-full h-full flex flex-col items-start justify-start">
-                {list.map((r) => (
-                  <ResponderItem
-                    key={r.id}
-                    responder={r}
-                    selected={selectedRes?.id === r.id}
-                    onSelect={setSelectedRes}
-                  />
-                ))}
-              </ul>
+            <div className="w-full h-full overflow-auto custom-scrollable">
+              {list.map((r) => (
+                <ResponderItem
+                  key={r.id}
+                  responder={r}
+                  selected={selectedRes?.id === r.id}
+                  onSelect={setSelectedRes}
+                />
+              ))}
             </div>
           </div>
         </div>

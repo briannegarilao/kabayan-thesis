@@ -29,7 +29,6 @@ const sampleResponders: Responder[] = [
     plate: "AMB-2025",
     color: "White",
     status: "On Duty",
-    assignedTo: "Report-42",
   },
 ];
 
