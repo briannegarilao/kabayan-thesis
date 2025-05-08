@@ -55,7 +55,8 @@ const RespondSection: React.FC<RespondSectionProps> = ({
           </button>
         </div>
 
-        <div className="flex flex-1 overflow-hidden">
+        {/* MAIN SECTION */}
+        <div className="w-full flex flex-1 overflow-auto">
           {/* left: full info */}
           <div className="w-[40%] h-full border-r border-gray">
             <ResponderFullInfo responder={selectedRes} />

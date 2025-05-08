@@ -28,42 +28,45 @@ const ResponderFullInfo: React.FC<ResponderFullInfoProps> = ({ responder }) => {
   const iconName = iconMap[responder.type] || iconMap.Default;
 
   return (
-    <div className="w-full p-6 space-y-4 overflow-auto">
+    <div
+      style={{ overflowY: "auto", scrollBehavior: "smooth" }}
+      className="w-full h-full flex flex-col items-start justify-start flex-1 overflow-auto p-[16px] gap-[16px] border-b-2 border-gray custom-scrollable"
+    >
       <div className="flex items-center gap-4">
-        <Icon
-          icon={iconName}
-          width={48}
-          height={48}
-          className="text-unassigned"
-        />
+        <div className="rounded-lg flex items-center justify-center border-2 border-white p-2">
+          <Icon icon={iconName} width={64} height={64} className="text-white" />
+        </div>
         <h2 className="text-2xl font-heading text-white">{responder.name}</h2>
       </div>
 
-      <div className="space-y-2 text-white">
-        <p>
-          <strong>Type:</strong> {responder.type}
-        </p>
-        <p>
-          <strong>Capacity:</strong> {responder.capacity}
-        </p>
-        <p>
-          <strong>Plate No.:</strong> {responder.plate}
-        </p>
-        <p>
-          <strong>Color:</strong> {responder.color}
-        </p>
-        <p>
-          <strong>Assigned To:</strong> {responder.assignedTo ?? "None"}
-        </p>
+      {/* ALERT DETAILS */}
+      <div className="w-full flex flex-row items-start justify-start ">
+        {/* Name */}
+        <div className="w-full flex flex-col items-start justify-start gap-[16px]">
+          <div className="w-full flex flex-col items-start justify-start gap-[8px]">
+            <h5 className="text-gray">TYPE</h5>
+            <p>{responder.type}</p>
+          </div>
+          <div className="w-full flex flex-col items-start justify-start gap-[8px]">
+            <h5 className="text-gray">CAPACITY</h5>
+            <p>{responder.capacity}</p>
+          </div>
+        </div>
+        <div className="w-full flex flex-col items-start justify-start gap-[16px]">
+          <div className="w-full flex flex-col items-start justify-start gap-[8px]">
+            <h5 className="text-gray">PLATE NO.</h5>
+            <p>{responder.plate}</p>
+          </div>
+          <div className="w-full flex flex-col items-start justify-start gap-[8px]">
+            <h5 className="text-gray">COLOR</h5>
+            <p> {responder.color}</p>
+          </div>
+        </div>
       </div>
 
-      <div className="pt-4 border-t border-gray flex justify-end">
-        <button
-          className="px-4 py-2 bg-unassigned text-white rounded disabled:opacity-50"
-          disabled={!responder}
-        >
-          Assign
-        </button>
+      {/* BUTTON */}
+      <div className="p-[10px] bg-critical-danger text-white cursor-pointer">
+        <h3>ASSIGN</h3>
       </div>
     </div>
   );

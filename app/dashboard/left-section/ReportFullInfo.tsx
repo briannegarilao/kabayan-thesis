@@ -66,7 +66,7 @@ const ReportFullInfo: React.FC<ReportFullInfoProps> = ({
       </div>
 
       {/* ALERT HEADING */}
-      <div className="w-full flex flex-row items-start justify-start gap-[16px]">
+      <div className="w-full flex flex-row items-center justify-start gap-[16px]">
         {/* Alert Icon */}
         <div
           className="rounded-lg flex items-center justify-center"
