@@ -1,15 +1,13 @@
+// app/dashboard/respond/RespondSection.tsx
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/firebaseconfig"; // Adjust if your firebase file is elsewhere
+import React, { useState, useEffect } from "react";
 import ResponderItem from "./ResponderItem";
 import ResponderFullInfo from "./ResponderFullInfo";
-<<<<<<< HEAD
 import AssignedToItem from "./AssignedToItem";
-import sampleResponders from "./sampleData";
-=======
->>>>>>> b5a939ad45bb437abde34cc9b8756ce740647683
+// remove: import sampleResponders from "./sampleData";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/firebaseconfig";
 
 export interface Responder {
   id: string;
@@ -19,67 +17,55 @@ export interface Responder {
   plate: string;
   color: string;
   status: string;
-  // we’ll ignore any assignedTo from data; use our mock below
-  assignedTo?: string[];
+  assignedTo?: string[]; // array of request IDs
 }
 
 interface RespondSectionProps {
   show: boolean;
   selectedRequest: any | null;
-  responders?: Responder[];
+  responders?: Responder[]; // optional override
   onClose: () => void;
 }
 
 const RespondSection: React.FC<RespondSectionProps> = ({
   show,
   selectedRequest,
+  responders = [],
   onClose,
 }) => {
-<<<<<<< HEAD
-  const list = responders.length > 0 ? responders : sampleResponders;
+  // state to hold our Firestore‐loaded units
+  const [units, setUnits] = useState<Responder[]>([]);
   const [selectedRes, setSelectedRes] = useState<Responder | null>(null);
 
-  // ── MOCK ASSIGNMENTS ──────────────────────────────
-  const mockAssignments: Record<string, string[]> = {
-    r1: ["Report-42", "Report-17"],
-    r2: [],
-    r3: ["Report-88"],
-  };
-
-  // lookup assignments for the selected responder
-  const assignments =
-    selectedRes && mockAssignments[selectedRes.id]
-      ? mockAssignments[selectedRes.id]
-      : [];
-=======
-  const [responders, setResponders] = useState<Responder[]>([]);
-  const [selectedRes, setSelectedRes] = useState<Responder | null>(null);
-
+  // Fetch all "units" docs once on mount
   useEffect(() => {
-    const fetchResponders = async () => {
-      const querySnapshot = await getDocs(collection(db, "units"));
-      const data: Responder[] = [];
-
-      querySnapshot.forEach((doc) => {
-        const d = doc.data();
-        data.push({
+    const fetchUnits = async () => {
+      const q = collection(db, "units");
+      const snap = await getDocs(q);
+      const loaded = snap.docs.map((doc) => {
+        const data = doc.data() as any;
+        return {
           id: doc.id,
-          name: d.vehicleName || "Unknown Unit",
-          type: d.type || "Unknown",
-          capacity: d.capacity || "0",
-          plate: d.plateNumber || "N/A",
-          color: d.color || "N/A",
-          status: d.status || "idle",
-          assignedTo: d.assignedRequestId || "",
-        });
+          name: data.vehicleName || "Unknown",
+          type: data.type || "Default",
+          capacity: data.capacity || "N/A",
+          plate: data.plateNumber || "N/A",
+          color: data.color || "N/A",
+          status: data.status || "unknown",
+          // normalize into array
+          assignedTo: data.assignedRequestId ? [data.assignedRequestId] : [],
+        } as Responder;
       });
-
-      setResponders(data);
+      setUnits(loaded);
     };
-
-    fetchResponders();
+    fetchUnits();
   }, []);
->>>>>>> b5a939ad45bb437abde34cc9b8756ce740647683
+
+  // If parent passed a `responders` prop, use that; else use our Firestore load
+  const list = responders.length > 0 ? responders : units;
+
+  // pull currently assigned request IDs for the selected unit
+  const assignments = selectedRes?.assignedTo ?? [];
 
   return (
     <div
@@ -102,26 +88,26 @@ const RespondSection: React.FC<RespondSectionProps> = ({
           </button>
         </div>
 
-<<<<<<< HEAD
         {/* MAIN */}
         <div className="w-full flex flex-1 flex-row">
-          {/* left column: full info + assignments */}
+          {/* Left column: full info + current assignments */}
           <div className="w-[50%] flex-1 h-full border-r-2 border-gray flex flex-col">
-            {/* details */}
+            {/* Responder full info */}
             <div className="w-full h-[40%] border-b border-gray overflow-y-auto">
               <ResponderFullInfo responder={selectedRes} />
             </div>
-
-            {/* assignments list */}
+            {/* Currently assigned to */}
             <div className="w-full flex-1 flex flex-col">
               <div className="w-full flex items-center border-b-2 border-gray px-[18px] py-[16px]">
                 <h4>CURRENTLY ASSIGNED TO</h4>
               </div>
               <div className="w-full h-full overflow-auto custom-scrollable">
                 {assignments.length > 0 ? (
-                  assignments.map((a) => (
-                    <AssignedToItem key={a} assignment={a} />
-                  ))
+                  <ul className="w-full flex flex-col">
+                    {assignments.map((a) => (
+                      <AssignedToItem key={a} assignment={a} />
+                    ))}
+                  </ul>
                 ) : (
                   <p className="text-gray-400 p-[18px]">
                     No current assignments
@@ -129,37 +115,16 @@ const RespondSection: React.FC<RespondSectionProps> = ({
                 )}
               </div>
             </div>
-=======
-        {/* MAIN SECTION */}
-        <div className="w-full flex flex-1 flex-row overflow-auto">
-          {/* 2nd column */}
-          <div className="w-[50%] flex-1 h-full border-r border-gray">
-            <div className="w-full h-[40%] flex flex-col items-start border-b border-gray overflow-y-auto">
-              <ResponderFullInfo responder={selectedRes} />
-            </div>
-            <div></div>
->>>>>>> b5a939ad45bb437abde34cc9b8756ce740647683
           </div>
 
-          {/* right column: all responders */}
+          {/* Right column: available responders */}
           <div className="w-[50%] flex-1 h-full">
             <div className="w-full flex items-center border-b-2 border-gray px-[18px] py-[16px]">
               <h4>AVAILABLE RESPONDERS</h4>
             </div>
-<<<<<<< HEAD
             <div className="w-full h-full overflow-auto custom-scrollable">
-              {list.map((r) => (
-                <ResponderItem
-                  key={r.id}
-                  responder={r}
-                  selected={selectedRes?.id === r.id}
-                  onSelect={setSelectedRes}
-                />
-              ))}
-=======
-            <div className="w-full h-full flex flex-col items-start justify-start overflow-auto custom-scrollable">
-              <ul className="w-full h-full flex flex-col items-start justify-start">
-                {responders.map((r) => (
+              <ul className="w-full flex flex-col">
+                {list.map((r) => (
                   <ResponderItem
                     key={r.id}
                     responder={r}
@@ -168,7 +133,6 @@ const RespondSection: React.FC<RespondSectionProps> = ({
                   />
                 ))}
               </ul>
->>>>>>> b5a939ad45bb437abde34cc9b8756ce740647683
             </div>
           </div>
         </div>
