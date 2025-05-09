@@ -14,6 +14,7 @@ import ResponderItem from "./ResponderItem";
 import ResponderFullInfo from "./ResponderFullInfo";
 import AssignedToItem from "./AssignedToItem";
 
+// shape of our unit/responder
 export interface Responder {
   id: string;
   name: string;
@@ -26,13 +27,17 @@ export interface Responder {
 }
 
 interface RespondSectionProps {
+  /** whether panel is visible (slid in) */
   show: boolean;
+  /** the request we're dispatching to */
   selectedRequest: {
     id: string;
     userId: string;
     [key: string]: any;
   } | null;
+  /** override list of responders (optional) */
   responders?: Responder[];
+  /** close panel callback */
   onClose: () => void;
 }
 
@@ -42,10 +47,12 @@ const RespondSection: React.FC<RespondSectionProps> = ({
   responders = [],
   onClose,
 }) => {
+  // local state: all units fetched from Firestore
   const [units, setUnits] = useState<Responder[]>([]);
+  // which unit is currently highlighted
   const [selectedRes, setSelectedRes] = useState<Responder | null>(null);
 
-  // Load responders from "units" collection
+  // ─── Fetch all units from Firestore once ───────────────────────────────
   useEffect(() => {
     (async () => {
       const snap = await getDocs(collection(db, "units"));
@@ -59,6 +66,7 @@ const RespondSection: React.FC<RespondSectionProps> = ({
           plate: d.plateNumber,
           color: d.color,
           status: d.status,
+          // multipleRequestId field holds an array of assigned request IDs
           assignedTo: d.multipleRequestId || [],
         } as Responder;
       });
@@ -66,23 +74,25 @@ const RespondSection: React.FC<RespondSectionProps> = ({
     })();
   }, []);
 
+  // choose passed‐in list or our Firestore load
   const list = responders.length > 0 ? responders : units;
+  // currently assigned request IDs for the selected unit
   const assignments = selectedRes?.assignedTo ?? [];
 
-  // Assignment logic
+  // ─── handle clicking "ASSIGN" ─────────────────────────────────────────
   const handleAssign = async () => {
-    if (!selectedRequest || !selectedRes || !selectedRequest.userId) return;
+    if (!selectedRequest || !selectedRes) return;
     const { id: requestId, userId } = selectedRequest;
     const unitId = selectedRes.id;
 
     try {
-      // Update nested request
+      // 1) update the specific request under users/{userId}/requests/{requestId}
       await updateDoc(doc(db, "users", userId, "requests", requestId), {
         assignedUnitId: unitId,
         status: "Ongoing",
       });
 
-      // Update unit
+      // 2) update the unit to append this request
       await updateDoc(doc(db, "units", unitId), {
         multipleRequestId: arrayUnion(requestId),
         status: "Dispatched",
@@ -99,14 +109,19 @@ const RespondSection: React.FC<RespondSectionProps> = ({
     <div
       className={`
         fixed inset-y-0 right-0 z-20 w-[60%] transform
-        ${show ? "translate-x-0" : "translate-x-full"}
+        ${
+          show ? "translate-x-0" : "translate-x-full"
+        }          /* slide logic */
         transition-transform duration-300 ease-in-out
         bg-black/75 backdrop-blur-sm flex pointer-events-auto
       `}
     >
       <div className="dashboard-panel flex flex-col border-l-2 border-gray w-full h-full">
-        {/* header */}
-        <div className="flex-none w-full flex items-center border-b-2 border-gray px-[18px] py-[16px] relative">
+        {/* ─── Header ─────────────────────────────────────────── */}
+        <div
+          className="flex-none w-full flex items-center border-b-2 border-gray
+                     px-[18px] py-[16px] relative"
+        >
           <h4>RESPOND DETAILS</h4>
           <button
             className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white"
@@ -116,11 +131,11 @@ const RespondSection: React.FC<RespondSectionProps> = ({
           </button>
         </div>
 
-        {/* main content splits into two columns */}
+        {/* ─── Main columns ──────────────────────────────────── */}
         <div className="flex flex-row w-full h-full overflow-hidden">
-          {/* left: full info + assignments */}
+          {/* LEFT: full info + current assignments */}
           <div className="w-1/2 flex flex-col border-r-2 border-gray min-h-0">
-            {/* full details */}
+            {/* vehicle detail panel */}
             <div className="flex-none h-[40%] border-b border-gray overflow-auto">
               <ResponderFullInfo
                 responder={selectedRes}
@@ -128,7 +143,7 @@ const RespondSection: React.FC<RespondSectionProps> = ({
               />
             </div>
 
-            {/* assignments list */}
+            {/* list of assignments */}
             <div className="flex-1 flex flex-col min-h-0">
               <div className="flex-none w-full flex items-center border-b-2 border-gray px-[18px] py-[16px]">
                 <h4>CURRENTLY ASSIGNED TO</h4>
@@ -149,7 +164,7 @@ const RespondSection: React.FC<RespondSectionProps> = ({
             </div>
           </div>
 
-          {/* right: available responders */}
+          {/* RIGHT: available responders */}
           <div className="w-1/2 flex flex-col min-h-0">
             <div className="flex-none w-full flex items-center border-b-2 border-gray px-[18px] py-[16px]">
               <h4>AVAILABLE RESPONDERS</h4>

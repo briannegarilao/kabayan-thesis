@@ -4,7 +4,7 @@ import React from "react";
 import { Icon } from "@iconify/react";
 import { Responder } from "./RespondSection";
 
-// map vehicle type to icon
+// map each vehicle type to an icon name
 const iconMap: Record<string, string> = {
   Firetruck: "mdi:fire-truck",
   Boat: "mdi:boat",
@@ -13,8 +13,11 @@ const iconMap: Record<string, string> = {
 };
 
 interface ResponderItemProps {
+  /** responder data */
   responder: Responder;
+  /** whether this item is selected */
   selected: boolean;
+  /** callback when clicked */
   onSelect: (r: Responder) => void;
 }
 
@@ -30,11 +33,11 @@ const ResponderItem: React.FC<ResponderItemProps> = ({
       onClick={() => onSelect(responder)}
       className={`
         w-full flex flex-col items-start p-[18px]
-        border-b border-gray cursor-pointer
-        hover:bg-gray-800
+        border-b border-gray cursor-pointer hover:bg-gray-800
         ${selected ? "bg-gray-500" : ""}
       `}
     >
+      {/* header row: icon + name */}
       <div className="w-full flex justify-between items-center">
         <div className="flex items-center gap-[9px]">
           <Icon icon={iconName} height={24} className="text-unassigned" />
@@ -42,6 +45,7 @@ const ResponderItem: React.FC<ResponderItemProps> = ({
         </div>
       </div>
 
+      {/* details: type, plate, capacity */}
       <div className="w-full flex flex-col divide-y divide-white/50">
         <div className="py-2">
           <p>{responder.type}</p>
@@ -54,6 +58,7 @@ const ResponderItem: React.FC<ResponderItemProps> = ({
         </div>
       </div>
 
+      {/* status button */}
       <button className="w-full bg-unassigned text-white py-2">
         <h4>{responder.status?.toUpperCase() || "UNKNOWN"}</h4>
       </button>
