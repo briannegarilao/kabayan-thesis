@@ -81,18 +81,32 @@ const RespondSection: React.FC<RespondSectionProps> = ({
 
   // ─── handle clicking "ASSIGN" ─────────────────────────────────────────
   const handleAssign = async () => {
+<<<<<<< HEAD
     if (!selectedRequest || !selectedRes) return;
+=======
+    if (!selectedRequest || !selectedRes || !selectedRequest.userId) return;
+
+>>>>>>> 1369ddf3e69a19407e5bd4a7b2d7836c8acd2adc
     const { id: requestId, userId } = selectedRequest;
     const unitId = selectedRes.id;
 
     try {
+<<<<<<< HEAD
       // 1) update the specific request under users/{userId}/requests/{requestId}
+=======
+      // Update the request (add unitId and vehicleName)
+>>>>>>> 1369ddf3e69a19407e5bd4a7b2d7836c8acd2adc
       await updateDoc(doc(db, "users", userId, "requests", requestId), {
-        assignedUnitId: unitId,
+        assignedUnitIds: arrayUnion(unitId),
+        responders: arrayUnion(selectedRes.name), // or vehicleName if that's what you're using
         status: "Ongoing",
       });
 
+<<<<<<< HEAD
       // 2) update the unit to append this request
+=======
+      // Update the unit (add requestId)
+>>>>>>> 1369ddf3e69a19407e5bd4a7b2d7836c8acd2adc
       await updateDoc(doc(db, "units", unitId), {
         multipleRequestId: arrayUnion(requestId),
         status: "Dispatched",
