@@ -72,17 +72,19 @@ const RespondSection: React.FC<RespondSectionProps> = ({
   // Assignment logic
   const handleAssign = async () => {
     if (!selectedRequest || !selectedRes || !selectedRequest.userId) return;
+
     const { id: requestId, userId } = selectedRequest;
     const unitId = selectedRes.id;
 
     try {
-      // Update nested request
+      // Update the request (add unitId and vehicleName)
       await updateDoc(doc(db, "users", userId, "requests", requestId), {
-        assignedUnitId: unitId,
+        assignedUnitIds: arrayUnion(unitId),
+        responders: arrayUnion(selectedRes.name), // or vehicleName if that's what you're using
         status: "Ongoing",
       });
 
-      // Update unit
+      // Update the unit (add requestId)
       await updateDoc(doc(db, "units", unitId), {
         multipleRequestId: arrayUnion(requestId),
         status: "Dispatched",
