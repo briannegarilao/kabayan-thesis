@@ -37,8 +37,8 @@ const ReportFullInfo: React.FC<ReportFullInfoProps> = ({
   const {
     type,
     timestamp,
-    status,
-    urgency,
+    status, //remove
+    urgency, // remove
     user,
     address,
     message,

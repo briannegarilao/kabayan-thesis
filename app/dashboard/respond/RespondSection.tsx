@@ -1,8 +1,13 @@
-// app/dashboard/respond/RespondSection.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  arrayUnion,
+} from "firebase/firestore";
 import { db } from "@/firebaseconfig";
 
 import ResponderItem from "./ResponderItem";
@@ -22,7 +27,11 @@ export interface Responder {
 
 interface RespondSectionProps {
   show: boolean;
-  selectedRequest: any | null;
+  selectedRequest: {
+    id: string;
+    userId: string;
+    [key: string]: any;
+  } | null;
   responders?: Responder[];
   onClose: () => void;
 }
@@ -36,7 +45,7 @@ const RespondSection: React.FC<RespondSectionProps> = ({
   const [units, setUnits] = useState<Responder[]>([]);
   const [selectedRes, setSelectedRes] = useState<Responder | null>(null);
 
-  // load your "units" collection from Firestore once
+  // Load responders from "units" collection
   useEffect(() => {
     (async () => {
       const snap = await getDocs(collection(db, "units"));
@@ -50,7 +59,7 @@ const RespondSection: React.FC<RespondSectionProps> = ({
           plate: d.plateNumber,
           color: d.color,
           status: d.status,
-          assignedTo: d.assignedRequestId ? [d.assignedRequestId] : [],
+          assignedTo: d.multipleRequestId || [],
         } as Responder;
       });
       setUnits(loaded);
@@ -59,6 +68,32 @@ const RespondSection: React.FC<RespondSectionProps> = ({
 
   const list = responders.length > 0 ? responders : units;
   const assignments = selectedRes?.assignedTo ?? [];
+
+  // Assignment logic
+  const handleAssign = async () => {
+    if (!selectedRequest || !selectedRes || !selectedRequest.userId) return;
+    const { id: requestId, userId } = selectedRequest;
+    const unitId = selectedRes.id;
+
+    try {
+      // Update nested request
+      await updateDoc(doc(db, "users", userId, "requests", requestId), {
+        assignedUnitId: unitId,
+        status: "Ongoing",
+      });
+
+      // Update unit
+      await updateDoc(doc(db, "units", unitId), {
+        multipleRequestId: arrayUnion(requestId),
+        status: "Dispatched",
+      });
+
+      alert("Unit assigned successfully!");
+    } catch (error) {
+      console.error("Assignment failed:", error);
+      alert("Failed to assign unit.");
+    }
+  };
 
   return (
     <div
@@ -87,7 +122,10 @@ const RespondSection: React.FC<RespondSectionProps> = ({
           <div className="w-1/2 flex flex-col border-r-2 border-gray min-h-0">
             {/* full details */}
             <div className="flex-none h-[40%] border-b border-gray overflow-auto">
-              <ResponderFullInfo responder={selectedRes} />
+              <ResponderFullInfo
+                responder={selectedRes}
+                onAssign={handleAssign}
+              />
             </div>
 
             {/* assignments list */}

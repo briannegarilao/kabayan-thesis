@@ -106,7 +106,8 @@ const MapSection: React.FC<MapSectionProps> = ({
           const container = document.createElement("div");
           createRoot(container).render(<AlertMarker />);
           container.style.cursor = "pointer";
-          container.onclick = () => setSelectedRequest({ ...req, user });
+          container.onclick = () =>
+            setSelectedRequest({ ...req, user, userId: user.id });
 
           new AdvancedMarkerElement({
             map: mapInstance.current!,
