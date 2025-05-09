@@ -40,7 +40,6 @@ const ResponderItem: React.FC<ResponderItemProps> = ({
           <Icon icon={iconName} height={24} className="text-unassigned" />
           <h4>{responder.name}</h4>
         </div>
-        {/* <h6 className="text-white uppercase">{responder.capacity}</h6> */}
       </div>
 
       <div className="w-full flex flex-col divide-y divide-white/50">

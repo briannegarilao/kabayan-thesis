@@ -14,9 +14,13 @@ const iconMap: Record<string, string> = {
 
 interface ResponderFullInfoProps {
   responder: Responder | null;
+  onAssign?: () => void;
 }
 
-const ResponderFullInfo: React.FC<ResponderFullInfoProps> = ({ responder }) => {
+const ResponderFullInfo: React.FC<ResponderFullInfoProps> = ({
+  responder,
+  onAssign,
+}) => {
   if (!responder) {
     return (
       <div className="flex-1 flex items-start justify-center text-gray">
@@ -32,11 +36,12 @@ const ResponderFullInfo: React.FC<ResponderFullInfoProps> = ({ responder }) => {
       style={{ overflowY: "auto", scrollBehavior: "smooth" }}
       className="w-full h-full flex flex-col items-start justify-start flex-1 overflow-auto p-[16px] gap-[16px]  custom-scrollable"
     >
-      {/* ALERT TOP HEADING */}
+      {/* HEADING */}
       <div className="w-full flex flex-row items-center justify-between">
         <h5>VEHICLE INFO</h5>
       </div>
 
+      {/* ICON + NAME */}
       <div className="flex items-center gap-4">
         <div className="rounded-lg flex items-center justify-center border-2 border-white p-2">
           <Icon icon={iconName} width={64} height={64} className="text-white" />
@@ -44,35 +49,39 @@ const ResponderFullInfo: React.FC<ResponderFullInfoProps> = ({ responder }) => {
         <h2 className="text-2xl font-heading text-white">{responder.name}</h2>
       </div>
 
-      {/* ALERT DETAILS */}
-      <div className="w-full flex flex-row items-start justify-start ">
-        {/* Name */}
+      {/* VEHICLE DETAILS */}
+      <div className="w-full flex flex-row items-start justify-start">
         <div className="w-full flex flex-col items-start justify-start gap-[16px]">
-          <div className="w-full flex flex-col items-start justify-start gap-[8px]">
+          <div className="w-full flex flex-col gap-[8px]">
             <h5 className="text-gray">TYPE</h5>
             <p>{responder.type}</p>
           </div>
-          <div className="w-full flex flex-col items-start justify-start gap-[8px]">
+          <div className="w-full flex flex-col gap-[8px]">
             <h5 className="text-gray">CAPACITY</h5>
             <p>{responder.capacity}</p>
           </div>
         </div>
         <div className="w-full flex flex-col items-start justify-start gap-[16px]">
-          <div className="w-full flex flex-col items-start justify-start gap-[8px]">
+          <div className="w-full flex flex-col gap-[8px]">
             <h5 className="text-gray">PLATE NO.</h5>
             <p>{responder.plate}</p>
           </div>
-          <div className="w-full flex flex-col items-start justify-start gap-[8px]">
+          <div className="w-full flex flex-col gap-[8px]">
             <h5 className="text-gray">COLOR</h5>
-            <p> {responder.color}</p>
+            <p>{responder.color}</p>
           </div>
         </div>
       </div>
 
-      {/* BUTTON */}
-      <div className="p-[10px] bg-critical-danger text-white cursor-pointer">
-        <h3>ASSIGN</h3>
-      </div>
+      {/* ASSIGN BUTTON */}
+      {onAssign && (
+        <div
+          onClick={onAssign}
+          className="p-[10px] bg-critical-danger text-white cursor-pointer"
+        >
+          <h3>ASSIGN</h3>
+        </div>
+      )}
     </div>
   );
 };

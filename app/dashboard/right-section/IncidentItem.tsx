@@ -22,7 +22,7 @@ const IncidentItem = ({
 
   return (
     <div
-      onClick={() => setSelectedRequest({ ...req, user })}
+      onClick={() => setSelectedRequest({ ...req, user, userId: user.id })}
       className={`
         w-full flex flex-col items-start p-[18px]
         border-b border-gray cursor-pointer

@@ -14,7 +14,7 @@ const QueueSection = ({
 }) => {
   // flatten all requests into a single array
   const incidents = users.flatMap((user) =>
-    user.requests.map((req: any) => ({ ...req, user }))
+    user.requests.map((req: any) => ({ ...req, user, userId: user.id }))
   );
 
   return (
