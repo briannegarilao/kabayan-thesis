@@ -80,12 +80,12 @@ const ResponderFullInfo: React.FC<ResponderFullInfoProps> = ({
 
       {/* only show when onAssign prop passed */}
       {onAssign && (
-        <button
-          className="p-[10px] bg-critical-danger text-white cursor-pointer"
+        <div
+          className="p-[10px] bg-gray text-white cursor-pointer"
           onClick={onAssign}
         >
-          ASSIGN
-        </button>
+          <h3>ASSIGN</h3>
+        </div>
       )}
     </div>
   );

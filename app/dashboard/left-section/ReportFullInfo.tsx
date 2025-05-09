@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Icon } from "@iconify/react";
+import { Icon, IconProps } from "@iconify/react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebaseconfig";
 
@@ -28,6 +28,8 @@ const ReportFullInfo: React.FC<ReportFullInfoProps> = ({
   onRespondClick,
 }) => {
   const [vehicleName, setVehicleName] = useState<string | null>(null);
+  // track when our <Icon> has actually loaded
+  const [iconLoaded, setIconLoaded] = useState(false);
 
   // Fetch vehicleName from unit doc
   useEffect(() => {
@@ -39,11 +41,11 @@ const ReportFullInfo: React.FC<ReportFullInfoProps> = ({
 
       try {
         const snap = await getDoc(doc(db, "units", selectedRequest.responder));
-        if (snap.exists()) {
-          setVehicleName(snap.data().vehicleName || selectedRequest.responder);
-        } else {
-          setVehicleName(selectedRequest.responder);
-        }
+        setVehicleName(
+          snap.exists()
+            ? snap.data().vehicleName || selectedRequest.responder
+            : selectedRequest.responder
+        );
       } catch (err) {
         console.error("Error loading unit:", err);
         setVehicleName(selectedRequest.responder);
@@ -72,6 +74,17 @@ const ReportFullInfo: React.FC<ReportFullInfoProps> = ({
   const containerTotal = defaultSize + 8;
   const padding = Math.round((containerTotal - iconSize) / 2);
 
+  // helper props for our <Icon>
+  const iconProps: IconProps = {
+    icon: iconName,
+    width: iconSize,
+    height: iconSize,
+    color,
+    // passed onto the <svg> element
+    onLoad: () => setIconLoaded(true),
+    style: { visibility: iconLoaded ? "visible" : "hidden" },
+  };
+
   return (
     <div
       style={{ overflowY: "auto", scrollBehavior: "smooth" }}
@@ -94,12 +107,18 @@ const ReportFullInfo: React.FC<ReportFullInfoProps> = ({
             border: `2px solid ${color}`,
           }}
         >
-          <Icon
-            icon={iconName}
-            width={iconSize}
-            height={iconSize}
-            color={color}
-          />
+          {/* placeholder box until iconLoaded */}
+          {!iconLoaded && (
+            <div
+              style={{
+                width: iconSize,
+                height: iconSize,
+                background: "transparent",
+              }}
+            />
+          )}
+          {/* the actual Icon, hidden until onLoad */}
+          <Icon {...iconProps} />
         </div>
         <div className="w-full flex flex-col items-start justify-start gap-[8px]">
           <h2>{type}</h2>
@@ -131,11 +150,8 @@ const ReportFullInfo: React.FC<ReportFullInfoProps> = ({
         {/* Current Responders */}
         <div className="w-full flex flex-col items-start justify-start gap-[8px]">
           <h5 className="text-gray">CURRENT RESPONDERS</h5>
-          {Array.isArray(selectedRequest.responders) &&
-          selectedRequest.responders.length > 0 ? (
-            selectedRequest.responders.map((name: string, index: number) => (
-              <p key={index}>{name}</p>
-            ))
+          {Array.isArray(responders) && responders.length > 0 ? (
+            responders.map((name: string, i: number) => <p key={i}>{name}</p>)
           ) : (
             <p>NONE</p>
           )}

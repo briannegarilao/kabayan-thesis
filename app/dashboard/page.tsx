@@ -6,7 +6,7 @@ import UnitSection from "./left-section/LeftSection";
 import QueueSection from "./right-section/RightSection";
 import RespondSection from "./respond/RespondSection";
 import { db } from "@/firebaseconfig";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, collectionGroup, onSnapshot } from "firebase/firestore";
 
 export default function Dashboard() {
   const [users, setUsers] = useState<any[]>([]);
@@ -14,34 +14,44 @@ export default function Dashboard() {
   const [showRespond, setShowRespond] = useState(false);
 
   useEffect(() => {
-    async function fetchData() {
-      const usersSnapshot = await getDocs(collection(db, "users"));
-      const userList = await Promise.all(
-        usersSnapshot.docs.map(async (docSnap) => {
-          const user = docSnap.data();
-          const requestsSnapshot = await getDocs(
-            collection(db, "users", docSnap.id, "requests")
-          );
-          const requests = requestsSnapshot.docs.map((r) => ({
-            id: r.id,
-            ...(r.data() as any),
-          }));
-          return { id: docSnap.id, ...user, requests };
-        })
-      );
-      setUsers(userList);
-    }
-    fetchData();
+    // We'll keep a local map of user → profile + requests array
+    const userMap: Record<string, any> = {};
+
+    // 1) Subscribe to top-level users collection (to get profile info)
+    const unsubUsers = onSnapshot(collection(db, "users"), (userSn) => {
+      userSn.docs.forEach((uDoc) => {
+        const u = uDoc.data();
+        userMap[uDoc.id] = { id: uDoc.id, ...u, requests: [] };
+      });
+    });
+
+    // 2) Subscribe to *all* requests subcollections across *all* users
+    const unsubReqs = onSnapshot(collectionGroup(db, "requests"), (reqSn) => {
+      // Clear out prior requests
+      Object.values(userMap).forEach((u: any) => (u.requests = []));
+
+      // Re‐group every request under its parent user in userMap
+      reqSn.docs.forEach((rDoc) => {
+        const uId = rDoc.ref.parent.parent?.id;
+        if (uId && userMap[uId]) {
+          userMap[uId].requests.push({ id: rDoc.id, ...rDoc.data() });
+        }
+      });
+
+      // Commit into state as an array
+      setUsers(Object.values(userMap));
+    });
+
+    return () => {
+      unsubUsers();
+      unsubReqs();
+    };
   }, []);
 
-  // open the respond panel
   const handleOpenRespond = () => {
     if (selectedRequest) setShowRespond(true);
   };
-  // close the respond panel
-  const handleCloseRespond = () => {
-    setShowRespond(false);
-  };
+  const handleCloseRespond = () => setShowRespond(false);
 
   return (
     <div className="relative w-screen h-screen overflow-hidden text-white bg-[#0d0d0d]">
@@ -72,7 +82,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Respond panel slides in from the right */}
+      {/* Respond panel */}
       <RespondSection
         show={showRespond}
         selectedRequest={selectedRequest}
