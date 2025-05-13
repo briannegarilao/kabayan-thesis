@@ -1,25 +1,36 @@
 "use client";
-
 import React from "react";
+import { Icon } from "@iconify/react";
 
-interface AssignedToItemProps {
-  /** the ID or label of a request already assigned */
-  assignment: string;
+export interface Assignment {
+  id: string;
+  type: string;
+  address: string;
+  userName: string;
+  timestamp: { toDate: () => Date };
 }
 
-const AssignedToItem: React.FC<AssignedToItemProps> = ({ assignment }) => {
-  return (
-    <div
-      className={`
-        w-full flex flex-col items-start p-[18px]
-        border-b border-gray
-        bg-gray-800 hover:bg-gray-700 text-white
-      `}
-    >
-      {/* just showing the assignment ID for now */}
-      <h4>{assignment}</h4>
+interface Props {
+  assignment: Assignment;
+}
+
+const AssignedToItem: React.FC<Props> = ({ assignment }) => (
+  <div className="w-full flex flex-col p-[18px] border-b border-gray">
+    <div className="flex items-center gap-[9px] mb-2">
+      <Icon
+        icon="line-md:hazard-lights-loop"
+        height={24}
+        className="text-critical-danger"
+      />
+      <h4>{assignment.type}</h4>
     </div>
-  );
-};
+    <p>
+      <strong>By:</strong> {assignment.userName}
+    </p>
+    <p>
+      <strong>Where:</strong> {assignment.address}
+    </p>
+  </div>
+);
 
 export default AssignedToItem;
