@@ -40,10 +40,10 @@ export default function AprioriTable() {
         <thead className="sticky top-0 z-10 bg-gray text-white  ">
           <tr>
             <th className="w-1/5 py-[12px] text-center whitespace-nowrap  ">
-              <h5>IF</h5>
+              <h5>PATTERN</h5>
             </th>
             <th className="w-1/5 py-[12px] text-center whitespace-nowrap  ">
-              <h5>THEN</h5>
+              <h5>COMMON ASSOCIATED</h5>
             </th>
             <th className="w-1/5 py-[12px] text-center whitespace-nowrap  ">
               <h5>CONFIDENCE</h5>

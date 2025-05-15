@@ -90,7 +90,7 @@ export default function ArimaChart() {
   };
 
   return (
-    <div className="w-full h-full px-4 py-2">
+    <div className="w-full h-full px-[16px] flex flex-col overflow-y-auto custom-scrollable">
       <Line data={data} options={options} />
     </div>
   );

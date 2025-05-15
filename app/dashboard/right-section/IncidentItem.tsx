@@ -37,11 +37,11 @@ const IncidentItem = ({
       onClick={() => setSelectedRequest({ ...req, user, userId: user.id })}
       className={`
         w-full flex flex-col items-start p-[18px]
-        border-b border-gray cursor-pointer
+        border-b border-gray cursor-pointer bg-black
         ${isSelected ? "bg-gray-500" : "hover:bg-gray-800"}
       `}
     >
-      <div className="w-full flex justify-between items-center">
+      <div className="w-full flex justify-between items-center gap-[8px]">
         <div className="flex items-center gap-[9px]">
           <Icon
             icon="line-md:hazard-lights-loop"

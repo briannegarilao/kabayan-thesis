@@ -1,5 +1,3 @@
-// app/dashboard/right-section/RightSection.tsx
-
 import React from "react";
 import IncidentItem from "./IncidentItem";
 
@@ -18,7 +16,7 @@ const QueueSection = ({
   );
 
   return (
-    <div className="dashboard-panel dashboard-panel-right flex flex-col">
+    <div className="dashboard-panel dashboard-panel-right flex flex-col bg-black">
       {/* Header stays fixed height */}
       <div className="w-full flex items-center border-b-2 border-gray px-[18px] py-[16px]">
         <h4>INCIDENT REPORTS</h4>
